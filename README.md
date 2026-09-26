@@ -1,10 +1,10 @@
-# 💬 C++ Multi-Client Chat Server
+#  C++ Multi-Client Chat Server
 
 A real-time multi-client chat application built using **C++ sockets**, designed to work reliably over LAN with proper handling of TCP stream behavior.
 
 ---
 
-## 🚀 Features
+##  Features
 
 * 🔹 Multi-client support (thread per client)
 * 🔹 Real-time message broadcasting
@@ -15,7 +15,7 @@ A real-time multi-client chat application built using **C++ sockets**, designed 
 
 ---
 
-## 🧠 Key Learning
+##  Key Learning
 
 This project focuses on understanding how **TCP actually works** beyond localhost testing.
 
@@ -30,7 +30,7 @@ This project focuses on understanding how **TCP actually works** beyond localhos
 
 ---
 
-## ⚠️ Problem Faced
+##  Problem Faced
 
 Initially, the chat system worked perfectly on `localhost`, but failed over LAN.
 
@@ -47,7 +47,7 @@ Initially, the chat system worked perfectly on `localhost`, but failed over LAN.
 
 ---
 
-## ✅ Solution
+##  Solution
 
 Implemented a proper message handling strategy:
 
@@ -63,7 +63,7 @@ This ensures correct behavior even when:
 
 ---
 
-## 🏗️ Project Structure
+##  Project Structure
 
 ```
 .
@@ -73,7 +73,7 @@ This ensures correct behavior even when:
 
 ---
 
-## 🛠️ How to Run
+##  How to Run
 
 ### 1. Compile
 
@@ -100,7 +100,7 @@ g++ client.cpp -o client -pthread
 
 ---
 
-## 🌐 LAN Usage (Phone ↔ Laptop)
+##  LAN Usage (Phone ↔ Laptop)
 
 1. Connect both devices to the same WiFi
 2. Find your laptop IP:
@@ -118,7 +118,7 @@ inet_pton(AF_INET, "YOUR_IP_HERE", &serverAddr.sin_addr);
 
 ---
 
-## 🔐 Future Improvements
+##  Future Improvements
 
 * [ ] Private messaging (`@username`)
 * [ ] Chat rooms / channels
@@ -128,7 +128,7 @@ inet_pton(AF_INET, "YOUR_IP_HERE", &serverAddr.sin_addr);
 
 ---
 
-## 📌 Tech Stack
+##  Tech Stack
 
 * C++
 * POSIX Sockets
@@ -137,7 +137,7 @@ inet_pton(AF_INET, "YOUR_IP_HERE", &serverAddr.sin_addr);
 
 ---
 
-## 💡 What This Project Shows
+##  What This Project Shows
 
 * Understanding of low-level networking
 * Ability to debug real-world system issues
