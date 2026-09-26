@@ -146,12 +146,4 @@ inet_pton(AF_INET, "YOUR_IP_HERE", &serverAddr.sin_addr);
 
 ---
 
-## 🤝 Contributions
 
-Open to improvements and suggestions!
-
----
-
-## 📜 License
-
-This project is licensed under the GNU General Public License v3.0 (GPLv3).
