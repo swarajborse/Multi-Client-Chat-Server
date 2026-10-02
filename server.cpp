@@ -16,6 +16,7 @@ map<int,string>clients;
 mutex client_mutex;
 const size_t MAX_BUFFER = 8192;
 const size_t MAX_MSG_LENGTH = 4096;
+const int MAX_CLIENTS = 100;
 
 bool sendAll(int sock, const string& msg){
     size_t totalSent = 0;
@@ -191,6 +192,15 @@ while(true){
     if(clientSocket < 0){
         perror("accept");
         continue;
+    }
+    {
+        lock_guard<mutex> lock(client_mutex);
+        if((int)clients.size() >= MAX_CLIENTS){
+            string err = "Server is full. Try again later.\n";
+            sendAll(clientSocket, err);
+            close(clientSocket);
+            continue;
+        }
     }
     thread t(handle_client, clientSocket);
     t.detach();
