@@ -96,15 +96,36 @@ while(true){
 }
 int main(){
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    sockaddr_in serverAddr;
+    if(serverSocket < 0){
+        perror("socket");
+        return 1;
+    }
+
+    int opt = 1;
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    sockaddr_in serverAddr{};
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(8080);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
-    bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr));
-    listen(serverSocket, 5);
+
+    if(bind(serverSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) < 0){
+        perror("bind");
+        close(serverSocket);
+        return 1;
+    }
+    if(listen(serverSocket, SOMAXCONN) < 0){
+        perror("listen");
+        close(serverSocket);
+        return 1;
+    }
     cout<<"Server is running on port 8080..."<<endl;
 while(true){
     int clientSocket = accept(serverSocket,nullptr,nullptr);
+    if(clientSocket < 0){
+        perror("accept");
+        continue;
+    }
     thread t(handle_client, clientSocket);
     t.detach();
 }
