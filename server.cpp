@@ -36,8 +36,6 @@ while(true){
     if(pos != string::npos){
         username = data.substr(0, pos);
         data.erase(0, pos + 1);
-        
-        data.clear();
         break;
     }
 
