@@ -8,6 +8,7 @@
 #include<map>
 #include<thread>
 #include<vector>
+#include<algorithm>
 
 using namespace std;
 
@@ -60,8 +61,27 @@ while(true){
        
 }
 
+    // Validate username: strip control chars, enforce length, reject duplicates
+    username.erase(remove_if(username.begin(), username.end(),
+        [](unsigned char c){ return !isprint(c); }), username.end());
+
+    if(username.empty() || username.size() > 32){
+        string err = "Invalid username (must be 1-32 printable characters). Disconnecting.\n";
+        sendAll(clientSocket, err);
+        close(clientSocket);
+        return;
+    }
+
     {
         lock_guard<mutex> lock(client_mutex);
+        for(auto& [fd, name] : clients){
+            if(name == username){
+                string err = "Username '" + username + "' is already taken. Disconnecting.\n";
+                sendAll(clientSocket, err);
+                close(clientSocket);
+                return;
+            }
+        }
         clients[clientSocket] = username;
     }
 
