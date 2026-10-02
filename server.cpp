@@ -7,18 +7,36 @@
 #include<mutex>
 #include<map>
 #include<thread>
+#include<vector>
 
 using namespace std;
 
 map<int,string>clients;
 mutex client_mutex;
 
+bool sendAll(int sock, const string& msg){
+    size_t totalSent = 0;
+    while(totalSent < msg.size()){
+        ssize_t sent = send(sock, msg.c_str() + totalSent,
+                            msg.size() - totalSent, 0);
+        if(sent <= 0) return false;
+        totalSent += sent;
+    }
+    return true;
+}
+
 void broadcast(string message,int sender_socket){
     lock_guard<mutex> lock(client_mutex);
+    vector<int> deadClients;
     for(auto& client : clients){
         if(client.first != sender_socket){
-            send(client.first, message.c_str(), message.size(), 0);
+            if(!sendAll(client.first, message)){
+                deadClients.push_back(client.first);
+            }
         }
+    }
+    for(int fd : deadClients){
+        clients.erase(fd);
     }
 }
 void handle_client(int clientSocket){
