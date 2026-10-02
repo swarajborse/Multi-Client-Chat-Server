@@ -14,6 +14,7 @@ using namespace std;
 
 map<int,string>clients;
 mutex client_mutex;
+const size_t MAX_BUFFER = 8192;
 
 bool sendAll(int sock, const string& msg){
     size_t totalSent = 0;
@@ -51,6 +52,12 @@ while(true){
        return;
     }
     data.append(buffer, bytes);
+    if(data.size() > MAX_BUFFER){
+        string err = "Username too long. Disconnecting.\n";
+        sendAll(clientSocket, err);
+        close(clientSocket);
+        return;
+    }
     size_t pos = data.find('\n');
     if(pos != string::npos){
         username = data.substr(0, pos);
@@ -113,6 +120,17 @@ while(true){
     
     }
     data.append(buffer, bytes);
+    if(data.size() > MAX_BUFFER){
+        cout << username << " exceeded buffer limit, disconnecting." << endl;
+        {
+            lock_guard<mutex> lock(client_mutex);
+            clients.erase(clientSocket);
+        }
+        close(clientSocket);
+        string leaveMsg = username + " was disconnected (flood).\n";
+        broadcast(leaveMsg, -1);
+        break;
+    }
     size_t pos;
     while((pos = data.find('\n')) != string::npos){
         
