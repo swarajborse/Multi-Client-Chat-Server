@@ -15,6 +15,7 @@ using namespace std;
 map<int,string>clients;
 mutex client_mutex;
 const size_t MAX_BUFFER = 8192;
+const size_t MAX_MSG_LENGTH = 4096;
 
 bool sendAll(int sock, const string& msg){
     size_t totalSent = 0;
@@ -98,9 +99,14 @@ while(true){
      size_t pos2;
         while((pos2=data.find('\n')) != string::npos){
             string msg = data.substr(0, pos2);
-            string fullMsg = username + ": " + msg + "\n";
-            cout<<fullMsg;
-            broadcast(fullMsg, clientSocket);
+            if(msg.size() > MAX_MSG_LENGTH){
+                string warn = "Message too long (max " + to_string(MAX_MSG_LENGTH) + " chars), dropped.\n";
+                sendAll(clientSocket, warn);
+            } else if(!msg.empty()){
+                string fullMsg = username + ": " + msg + "\n";
+                cout<<fullMsg;
+                broadcast(fullMsg, clientSocket);
+            }
             data.erase(0, pos2 + 1);
         }
     
@@ -139,7 +145,13 @@ while(true){
             data.erase(0, pos + 1);
             continue;
 
-        } 
+        }
+        if(msg.size() > MAX_MSG_LENGTH){
+            string warn = "Message too long (max " + to_string(MAX_MSG_LENGTH) + " chars), dropped.\n";
+            sendAll(clientSocket, warn);
+            data.erase(0, pos + 1);
+            continue;
+        }
         string fullMsg = username + ": " + msg + "\n";  
         cout<<fullMsg;
         broadcast(fullMsg, clientSocket);
