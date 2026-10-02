@@ -81,14 +81,14 @@ while(true){
 while(true){
     int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
     if(bytes <= 0){
-        cout<<username<<"disconnected"<<endl;
+        cout<<username<<" disconnected"<<endl;
         {
             lock_guard<mutex> lock(client_mutex);
             clients.erase(clientSocket);
         }
-        string leaveMsg = username + " has left the chat!\n";
-        broadcast(leaveMsg, clientSocket);
         close(clientSocket);
+        string leaveMsg = username + " has left the chat!\n";
+        broadcast(leaveMsg, -1);
         break;
     
     }
